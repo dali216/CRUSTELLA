@@ -57,7 +57,8 @@ $("checkout").addEventListener("submit",async e=>{
     const data=await response.json().catch(()=>({}));
     if(!response.ok||!data.ok)throw new Error(data.error||"La commande n’a pas pu être enregistrée.");
     const trackUrl=new URL("track.html",location.href);trackUrl.searchParams.set("token",data.tracking_token);
-    result.innerHTML="Commande enregistrée avec succès (#"+String(data.order_number).replace(/[&<>"']/g,"")+ "). <a href=\\""+trackUrl.href+"\\">Suivre ma commande ↗</a>. Crustella a reçu ta commande dans son tableau de bord.";
+    result.textContent="Commande enregistrée avec succès (#"+String(data.order_number).replace(/[&<>"']/g,"")+ "). ";
+    const trackingLink=document.createElement("a");trackingLink.href=trackUrl.href;trackingLink.textContent="Ouvrir le suivi ↗";result.append(trackingLink);result.append(" — Crustella a reçu ta commande dans son tableau de bord.");
     cart.clear();renderCart();form.reset();deliveryPosition=null;$("location-status").textContent="";toast("Commande envoyée à Crustella !");
   }catch(err){result.textContent="Erreur : "+(err.message||"connexion impossible")+". La commande n’a pas été confirmée. Réessaie dans quelques instants.";} 
   finally{submit.disabled=false;submit.textContent="Confirmer la commande ↗";}
