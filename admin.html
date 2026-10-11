@@ -1,15 +1,37 @@
 <!doctype html>
 <html lang="fr">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Admin setup | Crustella</title><link rel="stylesheet" href="style.css"></head>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#f47721"><title>Admin | Crustella Cloud Kitchen</title>
+<link rel="stylesheet" href="style.css">
+<style>
+:root{--admin-bg:#fffaf5;--admin-card:#fff;--admin-text:#211d19;--admin-muted:#81776f;--admin-border:#eee4da}
+body{background:var(--admin-bg);min-height:100vh}.admin-wrap{max-width:1200px;margin:auto;padding:28px 5vw 70px}.admin-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:32px}.admin-brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.06em}.admin-mark{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:var(--o);color:#fff;font:700 27px 'Space Grotesk',sans-serif}.admin-brand small{display:block;font-size:10px;color:var(--admin-muted);letter-spacing:.2em;margin-top:3px}.admin-link{font-size:12px;font-weight:800;border:1px solid var(--admin-border);background:#fff;padding:11px 14px;border-radius:12px}.admin-heading{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:24px}.admin-heading h1{font:700 clamp(32px,5vw,48px)/1.05 'Space Grotesk',sans-serif;letter-spacing:-.06em;margin:0}.admin-heading p{color:var(--admin-muted);font-size:13px;line-height:1.6}.admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:24px 0}.stat,.panel{background:var(--admin-card);border:1px solid var(--admin-border);border-radius:18px;padding:19px}.stat small{display:block;color:var(--admin-muted);font-size:12px}.stat strong{display:block;font:700 30px 'Space Grotesk',sans-serif;margin-top:10px}.stat .stat-icon{float:right;font-size:21px}.panel{margin-top:18px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.panel h2{font:700 20px 'Space Grotesk',sans-serif;margin:0}.muted{color:var(--admin-muted);font-size:12px}.admin-btn{border:0;background:var(--o);color:#fff;border-radius:10px;padding:11px 14px;font-size:12px;font-weight:800;cursor:pointer}.admin-btn.secondary{background:#fff;color:var(--admin-text);border:1px solid var(--admin-border)}.admin-input{width:100%;padding:12px;border:1px solid var(--admin-border);border-radius:10px;background:#fff;margin:6px 0 14px}.login-card{max-width:430px;margin:45px auto;background:#fff;border:1px solid var(--admin-border);border-radius:20px;padding:25px;box-shadow:0 18px 60px #4a2b120b}.login-card h2{font:700 27px 'Space Grotesk',sans-serif;margin:0 0 8px}.login-card label{font-size:12px;font-weight:700}.status{display:inline-flex;padding:6px 9px;border-radius:30px;background:#fff0df;color:#a84d0b;font-size:10px;font-weight:800;white-space:nowrap}.status.confirmed{background:#eaf7ef;color:#217648}.status.preparing{background:#fff3d9;color:#986400}.status.out_for_delivery{background:#e8f1ff;color:#245da8}.status.delivered{background:#eaf7ef;color:#217648}.status.cancelled{background:#feeceb;color:#b33d35}.orders{display:grid;gap:12px}.order{border:1px solid var(--admin-border);border-radius:14px;padding:15px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:15px}.order h3{font:700 16px 'Space Grotesk',sans-serif;margin:0 0 7px}.order p{font-size:12px;line-height:1.6;color:var(--admin-muted);margin:4px 0}.order-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:end}.order-actions select{padding:9px;border:1px solid var(--admin-border);border-radius:9px;background:#fff;font-size:11px;max-width:190px}.order-total{font-weight:800;color:var(--od)}.notice{padding:14px;border-radius:12px;background:#fff1e4;color:#87420f;font-size:12px;line-height:1.7;margin:16px 0}.empty-state{text-align:center;padding:34px 15px;color:var(--admin-muted);font-size:13px}.hidden{display:none!important}.filter-row{display:flex;gap:8px;flex-wrap:wrap}.filter-row select,.filter-row input{border:1px solid var(--admin-border);border-radius:10px;background:#fff;padding:10px;font-size:12px}.toast-admin{margin-top:12px;font-size:12px;color:#a84d0b;min-height:18px}
+@media(max-width:760px){.admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-heading{align-items:start;flex-direction:column}.order{grid-template-columns:1fr}.order-actions{justify-content:start}.admin-wrap{padding:20px 4vw 60px}.admin-top{margin-bottom:25px}}
+</style>
+</head>
 <body>
-<header class="site-header"><a class="brand" href="index.html"><span class="brand-mark">C</span><span>CRUSTELLA<small>ADMINISTRATION</small></span></a><a class="header-order" href="index.html">Voir le site ↗</a></header>
-<main class="menu-section" style="max-width:900px;margin:auto">
-<p class="eyebrow">ESPACE ADMINISTRATEUR</p><h1 style="font:700 clamp(35px,6vw,60px)/1 'Space Grotesk',sans-serif;letter-spacing:-.05em">Le poste de <span style="color:var(--orange)">commande.</span></h1>
-<p style="line-height:1.8;color:var(--muted);max-width:650px">Cette page est actuellement un écran de préparation. Les commandes du site sont envoyées directement à WhatsApp. Aucun historique partagé ni connexion administrateur sécurisée n’est encore configuré.</p>
-<div style="border:1px solid var(--line);border-radius:16px;padding:24px;margin-top:28px">
-<h2 style="font:700 23px 'Space Grotesk',sans-serif">Prochaine étape : connecter Supabase</h2>
-<ul style="line-height:2;color:#625b55;padding-left:20px"><li>Créer un projet Supabase et récupérer son URL et sa clé publique anon/publishable.</li><li>Créer les tables de commandes et activer Row Level Security (RLS).</li><li>Créer le compte administrateur dans Supabase Auth et lui attribuer le rôle admin côté serveur.</li><li>Ajouter une Edge Function pour valider et enregistrer les commandes sans exposer de clé secrète.</li><li>Charger les commandes dans ce tableau de bord après connexion admin.</li></ul>
-<p style="font-size:12px;color:var(--orange-dark);font-weight:700">Sécurité : ne place jamais une clé service_role, un mot de passe ou un secret dans les fichiers publics de GitHub Pages.</p>
-</div><p style="margin-top:25px"><a class="button button-dark" href="index.html">← Retour à la boutique</a></p>
-</main><footer><p>Crustella Cloud Kitchen · Administration</p></footer>
+<div class="admin-wrap">
+<header class="admin-top"><a class="admin-brand" href="index.html"><span class="admin-mark">C</span><span>CRUSTELLA<small>ESPACE ADMIN</small></span></a><a class="admin-link" href="index.html">← Boutique</a></header>
+<section id="login-section" class="login-card">
+<p class="eyebrow">ACCÈS SÉCURISÉ</p><h2>Bon retour.</h2><p class="muted">Connecte-toi avec le compte administrateur Crustella.</p>
+<form id="login-form"><label for="email">Adresse e-mail</label><input class="admin-input" id="email" type="email" autocomplete="username" required placeholder="admin@crustella.tn"><label for="password">Mot de passe</label><input class="admin-input" id="password" type="password" autocomplete="current-password" required placeholder="••••••••"><button class="admin-btn" style="width:100%" type="submit">Se connecter ↗</button></form>
+<div id="login-message" class="toast-admin" role="status"></div>
+<p class="muted" style="margin-top:18px">L’accès est réservé aux comptes ajoutés dans la liste des administrateurs Supabase.</p>
+</section>
+<section id="dashboard-section" class="hidden">
+<div class="admin-heading"><div><p class="eyebrow">VUE D’ENSEMBLE</p><h1>Le poste de <span style="color:var(--o)">commande.</span></h1><p>Bonjour ! Voici l’activité de Crustella en temps réel.</p></div><button class="admin-btn secondary" id="logout-btn">Déconnexion</button></div>
+<div id="setup-notice" class="notice hidden"></div>
+<div class="admin-grid">
+<div class="stat"><span class="stat-icon">🛎️</span><small>Commandes reçues</small><strong id="stat-total">—</strong></div>
+<div class="stat"><span class="stat-icon">🆕</span><small>Nouvelles</small><strong id="stat-new">—</strong></div>
+<div class="stat"><span class="stat-icon">🔥</span><small>En préparation</small><strong id="stat-preparing">—</strong></div>
+<div class="stat"><span class="stat-icon">💰</span><small>Ventes livrées</small><strong id="stat-sales">— DT</strong></div>
+</div>
+<div class="panel"><div class="panel-head"><div><h2>Commandes</h2><p class="muted">Les nouvelles commandes apparaissent ici automatiquement.</p></div><button id="refresh-btn" class="admin-btn secondary">↻ Actualiser</button></div>
+<div class="filter-row"><select id="status-filter"><option value="all">Tous les statuts</option><option value="new">Nouvelles</option><option value="confirmed">Confirmées</option><option value="preparing">En préparation</option><option value="out_for_delivery">En livraison</option><option value="delivered">Livrées</option><option value="cancelled">Annulées</option></select><input id="order-search" type="search" placeholder="Rechercher nom ou téléphone"></div>
+<div id="orders-list" class="orders" style="margin-top:15px"><div class="empty-state">Connexion à la base de données…</div></div><div id="dashboard-message" class="toast-admin" role="status"></div></div>
+</section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="admin.js"></script>
 </body></html>
