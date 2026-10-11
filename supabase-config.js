@@ -1,6 +1,6 @@
-/* Public frontend configuration only. Replace these two placeholders after creating your Supabase project.
-   Never put a database password, service_role key, or any secret in this file. */
+/* Public frontend config only. The publishable key is designed for browser use.
+   Never put service_role, database passwords, or any secret in this file. */
 window.CRUSTELLA_SUPABASE = {
-  url: "YOUR_SUPABASE_PROJECT_URL",
-  publishableKey: "YOUR_SUPABASE_PUBLISHABLE_KEY"
+  url: "https://bnwsnhhvrbwvjwvywjgc.supabase.co",
+  publishableKey: "sb_publishable_gp2gxkgWt0J5zyw94aeKiA_TjF5S4lo"
 };
