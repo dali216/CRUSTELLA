@@ -59,7 +59,7 @@ $("checkout").addEventListener("submit",async e=>{
     if(!response.ok||!data.ok)throw new Error(data.error||"La commande n’a pas pu être enregistrée.");
     const trackUrl=new URL("track.html",location.href);trackUrl.searchParams.set("token",data.tracking_token);
     const lines=products.filter(p=>cart.has(p.id)).map(p=>`• ${p.name} x${cart.get(p.id)} — ${money(p.price*cart.get(p.id))}`);
-    const msg=["🍔 *NOUVELLE COMMANDE — CRUSTELLA*","*Commande #"+data.order_number+"*","",...lines,"","*Total : "+money(data.total_millimes/1000)+"*","*Paiement : à la livraison*","","*Client :* "+name,"*Téléphone :* "+phone,"*Adresse :* "+address,note?"*Note :* "+note:"","*Suivi de la commande :* "+trackUrl.href,"Merci de confirmer la commande et le délai de livraison."].filter(Boolean).join("\\n");
+    const msg=["🍔 *NOUVELLE COMMANDE — CRUSTELLA*","*Commande #"+data.order_number+"*","",...lines,"","*Total : "+money(data.total_millimes/1000)+"*","*Paiement : à la livraison*","","*Client :* "+name,"*Téléphone :* "+phone,"*Adresse :* "+address,note?"*Note :* "+note:"","*Suivi de la commande :* "+trackUrl.href,"Merci de confirmer la commande et le délai de livraison."].filter(Boolean).join("\n");
     result.innerHTML="Commande enregistrée (#"+String(data.order_number).replace(/[&<>"']/g,"")+ "). <a href=\""+trackUrl.href+"\">Suivre ma commande ↗</a>.";
     window.open("https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(msg),"_blank","noopener,noreferrer");
     cart.clear();renderCart();form.reset();deliveryPosition=null;$("location-status").textContent="";toast("Commande enregistrée !");
