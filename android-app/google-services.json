@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "593050704853",
+    "project_id": "tncrustellaadmin",
+    "storage_bucket": "tncrustellaadmin.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:593050704853:android:0169b8fc2d620f97e8bb5c",
+        "android_client_info": {
+          "package_name": "tn.crustella.admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClDFT0X9ydraFtu9zsmfrycdCgJSjr_Jo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
