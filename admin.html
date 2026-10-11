@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="fr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Admin setup | Crustella</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="site-header"><a class="brand" href="index.html"><span class="brand-mark">C</span><span>CRUSTELLA<small>ADMINISTRATION</small></span></a><a class="header-order" href="index.html">Voir le site ↗</a></header>
+<main class="menu-section" style="max-width:900px;margin:auto">
+<p class="eyebrow">ESPACE ADMINISTRATEUR</p><h1 style="font:700 clamp(35px,6vw,60px)/1 'Space Grotesk',sans-serif;letter-spacing:-.05em">Le poste de <span style="color:var(--orange)">commande.</span></h1>
+<p style="line-height:1.8;color:var(--muted);max-width:650px">Cette page est actuellement un écran de préparation. Les commandes du site sont envoyées directement à WhatsApp. Aucun historique partagé ni connexion administrateur sécurisée n’est encore configuré.</p>
+<div style="border:1px solid var(--line);border-radius:16px;padding:24px;margin-top:28px">
+<h2 style="font:700 23px 'Space Grotesk',sans-serif">Prochaine étape : connecter Supabase</h2>
+<ul style="line-height:2;color:#625b55;padding-left:20px"><li>Créer un projet Supabase et récupérer son URL et sa clé publique anon/publishable.</li><li>Créer les tables de commandes et activer Row Level Security (RLS).</li><li>Créer le compte administrateur dans Supabase Auth et lui attribuer le rôle admin côté serveur.</li><li>Ajouter une Edge Function pour valider et enregistrer les commandes sans exposer de clé secrète.</li><li>Charger les commandes dans ce tableau de bord après connexion admin.</li></ul>
+<p style="font-size:12px;color:var(--orange-dark);font-weight:700">Sécurité : ne place jamais une clé service_role, un mot de passe ou un secret dans les fichiers publics de GitHub Pages.</p>
+</div><p style="margin-top:25px"><a class="button button-dark" href="index.html">← Retour à la boutique</a></p>
+</main><footer><p>Crustella Cloud Kitchen · Administration</p></footer>
+</body></html>
