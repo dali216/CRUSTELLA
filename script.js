@@ -52,6 +52,7 @@ $("checkout").addEventListener("submit",async e=>{
   if(!cfg.url||!cfg.publishableKey){result.textContent="Service de commande indisponible : configuration Supabase manquante.";return;}
   const payload={customer_name:name,customer_phone:phone,delivery_address:address,customer_note:note||null,items:products.filter(p=>cart.has(p.id)).map(p=>({id:p.id,quantity:cart.get(p.id)})),payment_method:"cash_on_delivery"};
   if(f.get("gpsConsent")==="on"&&deliveryPosition){payload.delivery_lat=deliveryPosition.lat;payload.delivery_lng=deliveryPosition.lng;}
+  const whatsappWindow=window.open("about:blank","_blank");
   submit.disabled=true;submit.textContent="Enregistrement de la commande…";result.textContent="Enregistrement sécurisé…";
   try{
     const response=await fetch(cfg.url+"/functions/v1/create-order",{method:"POST",headers:{"Content-Type":"application/json","apikey":cfg.publishableKey,"Authorization":"Bearer "+cfg.publishableKey},body:JSON.stringify(payload)});
@@ -60,10 +61,11 @@ $("checkout").addEventListener("submit",async e=>{
     const trackUrl=new URL("track.html",location.href);trackUrl.searchParams.set("token",data.tracking_token);
     const lines=products.filter(p=>cart.has(p.id)).map(p=>`• ${p.name} x${cart.get(p.id)} — ${money(p.price*cart.get(p.id))}`);
     const msg=["🍔 *NOUVELLE COMMANDE — CRUSTELLA*","*Commande #"+data.order_number+"*","",...lines,"","*Total : "+money(data.total_millimes/1000)+"*","*Paiement : à la livraison*","","*Client :* "+name,"*Téléphone :* "+phone,"*Adresse :* "+address,note?"*Note :* "+note:"","*Suivi de la commande :* "+trackUrl.href,"Merci de confirmer la commande et le délai de livraison."].filter(Boolean).join("\n");
-    result.innerHTML="Commande enregistrée (#"+String(data.order_number).replace(/[&<>"']/g,"")+ "). <a href=\""+trackUrl.href+"\">Suivre ma commande ↗</a>.";
-    window.open("https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(msg),"_blank","noopener,noreferrer");
+    const waUrl="https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(msg);
+    result.innerHTML="Commande enregistrée (#"+String(data.order_number).replace(/[&<>"']/g,"")+ "). <a href=\""+trackUrl.href+"\">Suivre ma commande ↗</a> · <a href=\""+waUrl+"\" target=\"_blank\" rel=\"noopener noreferrer\">Ouvrir WhatsApp ↗</a>.";
+    if(whatsappWindow)whatsappWindow.location.href=waUrl;
     cart.clear();renderCart();form.reset();deliveryPosition=null;$("location-status").textContent="";toast("Commande enregistrée !");
-  }catch(err){result.textContent="Erreur : "+(err.message||"connexion impossible")+". Réessaie, ou contacte-nous sur WhatsApp en précisant que la commande n’a pas été enregistrée.";}
+  }catch(err){if(whatsappWindow)whatsappWindow.close();result.textContent="Erreur : "+(err.message||"connexion impossible")+". Réessaie, ou contacte-nous sur WhatsApp en précisant que la commande n’a pas été enregistrée.";}
   finally{submit.disabled=false;submit.textContent="Enregistrer la commande + WhatsApp ↗";}
 });
 $("year").textContent=new Date().getFullYear();renderProducts();renderCart();
