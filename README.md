@@ -7,10 +7,11 @@ White/orange mobile-first ordering website for the Tunisian Crustella Cloud Kitc
 - Shopping cart, quantity controls and order total.
 - Customer name, phone, delivery address and optional note.
 - Cash on delivery.
-- WhatsApp order handoff to **+216 94 027 423**.
+- Orders saved securely in Supabase and managed from the private Admin Dashboard.
+- Optional consent-based GPS location for delivery; customer tracking link hides personal address and phone.
 - Progressive Web App (PWA) manifest and service worker for supported install/offline shell.
 - Android WebView wrapper project under `android/`; GitHub Actions builds a debug APK.
-- Admin preparation page and Supabase SQL starter; backend is not connected yet.
+- Admin dashboard with sign-in, live order updates, status changes, browser notifications, and map link for delivery.
 
 ## Website
 Repository: https://github.com/dali216/CRUSTELLA  
@@ -23,11 +24,11 @@ Every push to `main` should start the workflow **Build Crustella Android APK**. 
 
 The Android wrapper loads the hosted website, so GitHub Pages must be published and the phone needs internet access for live ordering. PWA installation from Chrome on Android is another installable option and does not require an APK.
 
-## WhatsApp order flow
-Checkout opens WhatsApp with a prepared order message. The customer must press **Send**. The website does not yet store orders in a shared database, send automatic push notifications, or deliver a copy to an admin dashboard.
+## Order flow
+Checkout saves orders through the `create-order` Supabase Edge Function. The server validates item IDs, quantities and prices. Orders appear in the private Admin Dashboard; the admin can change the status, and customers can follow the order through a tokenized tracking link. Payment is cash on delivery. Optional GPS coordinates are sent only after explicit customer consent.
 
-## Supabase later
-Run `supabase/schema.sql` in the Supabase SQL Editor only after reviewing it. To make the admin dashboard and order history real, connect Supabase Auth and a server-side Edge Function, then apply least-privilege RLS policies. Use only the public anon/publishable key in frontend configuration. **Never put the Supabase service_role key, passwords, or webhook secrets in this public repository.**
+## Supabase setup
+Follow [SUPABASE-SETUP.md](SUPABASE-SETUP.md). The database schema must be run in the Supabase SQL Editor and both Edge Functions deployed. GitHub Actions deployment also requires the repository secret `SUPABASE_ACCESS_TOKEN`. Only the public publishable key is included in frontend configuration; never commit a service-role key or other secret.
 
 ## Menu prices currently in the site
 - Makloub l’ordinaire — 8 DT
