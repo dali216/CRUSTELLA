@@ -34,7 +34,16 @@
   }
   function watchOrders(){
     if(channel)client.removeChannel(channel);
-    channel=client.channel("crustella-admin-orders").on("postgres_changes",{event:"*",schema:"public",table:"orders"},()=>loadOrders()).subscribe();
+    channel=client.channel("crustella-admin-orders")
+      .on("postgres_changes",{event:"INSERT",schema:"public",table:"orders"},payload=>{
+        loadOrders();
+        if("Notification" in window && Notification.permission==="granted"){
+          const o=payload.new||{};
+          new Notification("Nouvelle commande Crustella", {body:"Commande #"+(o.order_number||"")+" — "+(o.customer_name||"Client")+" · "+money(o.total_millimes), icon:"icons/icon.svg"});
+        }
+      })
+      .on("postgres_changes",{event:"UPDATE",schema:"public",table:"orders"},()=>loadOrders())
+      .subscribe();
   }
   async function verifyAdmin(session){
     if(!session){showLogin();return;}
@@ -51,6 +60,11 @@
   });
   $("logout-btn").addEventListener("click",async()=>{if(channel)await client.removeChannel(channel);await client.auth.signOut();showLogin();});
   $("refresh-btn").addEventListener("click",loadOrders);
+  $("notifications-btn")?.addEventListener("click",async()=>{
+    if(!("Notification" in window)){message("dashboard-message","Les notifications navigateur ne sont pas prises en charge ici.");return;}
+    const permission=await Notification.requestPermission();
+    message("dashboard-message",permission==="granted"?"Notifications activées pour les nouvelles commandes.":"Notifications non autorisées par le navigateur.");
+  });
   $("status-filter").addEventListener("change",render);$("order-search").addEventListener("input",render);
   $("orders-list").addEventListener("change",async e=>{
     const select=e.target.closest("[data-status]");if(!select)return;
@@ -62,7 +76,7 @@
   $("orders-list").addEventListener("click",async e=>{
     const btn=e.target.closest("[data-track]");if(!btn)return;
     const o=orders.find(x=>x.id===btn.dataset.track);if(!o)return;
-    const url=new URL("track.html",location.href);url.searchParams.set("id",o.id);
+    const url=new URL("track.html",location.href);url.searchParams.set("token",o.tracking_token);
     try{await navigator.clipboard.writeText(url.href);message("dashboard-message","Lien de suivi copié.");}
     catch{window.prompt("Copie le lien de suivi :",url.href);}
   });
