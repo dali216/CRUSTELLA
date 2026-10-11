@@ -28,7 +28,7 @@ body{background:var(--admin-bg);min-height:100vh}.admin-wrap{max-width:1200px;ma
 <div class="stat"><span class="stat-icon">🔥</span><small>En préparation</small><strong id="stat-preparing">—</strong></div>
 <div class="stat"><span class="stat-icon">💰</span><small>Ventes livrées</small><strong id="stat-sales">— DT</strong></div>
 </div>
-<div class="panel"><div class="panel-head"><div><h2>Commandes</h2><p class="muted">Les nouvelles commandes apparaissent ici automatiquement.</p></div><button id="refresh-btn" class="admin-btn secondary">↻ Actualiser</button></div>
+<div class="panel"><div class="panel-head"><div><h2>Commandes</h2><p class="muted">Les nouvelles commandes apparaissent ici automatiquement.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="notifications-btn" class="admin-btn">🔔 Activer notifications</button><button id="refresh-btn" class="admin-btn secondary">↻ Actualiser</button></div></div>
 <div class="filter-row"><select id="status-filter"><option value="all">Tous les statuts</option><option value="new">Nouvelles</option><option value="confirmed">Confirmées</option><option value="preparing">En préparation</option><option value="out_for_delivery">En livraison</option><option value="delivered">Livrées</option><option value="cancelled">Annulées</option></select><input id="order-search" type="search" placeholder="Rechercher nom ou téléphone"></div>
 <div id="orders-list" class="orders" style="margin-top:15px"><div class="empty-state">Connexion à la base de données…</div></div><div id="dashboard-message" class="toast-admin" role="status"></div></div>
 </section>
