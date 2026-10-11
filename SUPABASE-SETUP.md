@@ -42,7 +42,7 @@ values ('PASTE_AUTH_USER_UUID_HERE');
 ## 5. Order flow and GPS privacy
 
 - Checkout first sends the cart to the server function; the server recomputes prices from its own menu catalogue. If saving fails, it does not claim that the order was registered.
-- After successful saving, WhatsApp opens with the order details and a customer tracking link. The customer still needs to press **Send** in WhatsApp to send the message to the restaurant.
+- After successful saving, the order appears in the private Admin Dashboard. The customer receives a tracking link on the confirmation page; no WhatsApp handoff is required.
 - The GPS checkbox is optional. The browser asks for location permission only after the customer checks consent and taps **Utiliser ma position**. Coordinates are stored only if permission succeeds. Without consent/location, the typed address is used.
 - The public tracking page displays status and item summary only. It does not reveal customer name, phone, street address or coordinates.
 - Browser notification support depends on the browser and permission; the admin page must remain open to receive live notifications.
