@@ -26,7 +26,46 @@ $("cart-items").addEventListener("click",e=>{const b=e.target.closest("[data-del
 $("open-cart").addEventListener("click",()=>{$("overlay").hidden=false;document.body.style.overflow="hidden"});
 function closeCart(){$("overlay").hidden=true;document.body.style.overflow=""}
 $("close-cart").addEventListener("click",closeCart);$("overlay").addEventListener("click",e=>{if(e.target===$("overlay"))closeCart()});document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("overlay").hidden)closeCart()});
-$("checkout").addEventListener("submit",e=>{e.preventDefault();if(!count()){toast("Ton panier est vide.");return}const f=new FormData(e.currentTarget),name=String(f.get("name")||"").trim(),phone=String(f.get("phone")||"").trim(),address=String(f.get("address")||"").trim(),note=String(f.get("note")||"").trim();if(!name||!phone||!address){toast("Complète les champs obligatoires.");return}const lines=products.filter(p=>cart.has(p.id)).map(p=>`• ${p.name} x${cart.get(p.id)} — ${money(p.price*cart.get(p.id))}`);const msg=["🍔 *NOUVELLE COMMANDE — CRUSTELLA*","",...lines,"","*Total estimé : "+money(total())+"*","*Paiement : à la livraison*","","*Client :* "+name,"*Téléphone :* "+phone,"*Adresse :* "+address,note?"*Note :* "+note:"","Merci de confirmer la commande et le délai de livraison."].filter(Boolean).join("\n");window.open("https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(msg),"_blank","noopener,noreferrer")});
+let deliveryPosition=null;
+const locationButton=$("get-location");
+locationButton?.addEventListener("click",()=>{
+  const consent=$("checkout").elements.namedItem("gpsConsent");
+  const status=$("location-status");
+  if(!consent?.checked){status.textContent="Coche d’abord la case de consentement. Le GPS reste facultatif.";return;}
+  if(!navigator.geolocation){status.textContent="La géolocalisation n’est pas disponible sur cet appareil.";return;}
+  status.textContent="Demande d’autorisation GPS…";
+  navigator.geolocation.getCurrentPosition(pos=>{
+    deliveryPosition={lat:pos.coords.latitude,lng:pos.coords.longitude};
+    status.textContent="Position obtenue. Elle sera envoyée uniquement avec ta commande."; 
+  },err=>{deliveryPosition=null;status.textContent=err.code===1?"Autorisation refusée. Tu peux commander avec l’adresse écrite.":"Position indisponible. Tu peux continuer sans GPS.";},{enableHighAccuracy:false,timeout:10000,maximumAge:60000});
+});
+$("checkout").elements.namedItem("gpsConsent")?.addEventListener("change",e=>{
+  if(!e.target.checked){deliveryPosition=null;$("location-status").textContent="Le partage GPS est désactivé.";}
+});
+$("checkout").addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!count()){toast("Ton panier est vide.");return;}
+  const form=e.currentTarget, f=new FormData(form);
+  const name=String(f.get("name")||"").trim(),phone=String(f.get("phone")||"").trim(),address=String(f.get("address")||"").trim(),note=String(f.get("note")||"").trim();
+  if(!name||!phone||!address){toast("Complète les champs obligatoires.");return;}
+  const cfg=window.CRUSTELLA_SUPABASE||{}, result=$("order-result"), submit=form.querySelector('button[type="submit"]');
+  if(!cfg.url||!cfg.publishableKey){result.textContent="Service de commande indisponible : configuration Supabase manquante.";return;}
+  const payload={customer_name:name,customer_phone:phone,delivery_address:address,customer_note:note||null,items:products.filter(p=>cart.has(p.id)).map(p=>({id:p.id,quantity:cart.get(p.id)})),payment_method:"cash_on_delivery"};
+  if(f.get("gpsConsent")==="on"&&deliveryPosition){payload.delivery_lat=deliveryPosition.lat;payload.delivery_lng=deliveryPosition.lng;}
+  submit.disabled=true;submit.textContent="Enregistrement de la commande…";result.textContent="Enregistrement sécurisé…";
+  try{
+    const response=await fetch(cfg.url+"/functions/v1/create-order",{method:"POST",headers:{"Content-Type":"application/json","apikey":cfg.publishableKey,"Authorization":"Bearer "+cfg.publishableKey},body:JSON.stringify(payload)});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||!data.ok)throw new Error(data.error||"La commande n’a pas pu être enregistrée.");
+    const trackUrl=new URL("track.html",location.href);trackUrl.searchParams.set("token",data.tracking_token);
+    const lines=products.filter(p=>cart.has(p.id)).map(p=>`• ${p.name} x${cart.get(p.id)} — ${money(p.price*cart.get(p.id))}`);
+    const msg=["🍔 *NOUVELLE COMMANDE — CRUSTELLA*","*Commande #"+data.order_number+"*","",...lines,"","*Total : "+money(data.total_millimes/1000)+"*","*Paiement : à la livraison*","","*Client :* "+name,"*Téléphone :* "+phone,"*Adresse :* "+address,note?"*Note :* "+note:"","*Suivi de la commande :* "+trackUrl.href,"Merci de confirmer la commande et le délai de livraison."].filter(Boolean).join("\\n");
+    result.innerHTML="Commande enregistrée (#"+String(data.order_number).replace(/[&<>"']/g,"")+ "). <a href=\""+trackUrl.href+"\">Suivre ma commande ↗</a>.";
+    window.open("https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(msg),"_blank","noopener,noreferrer");
+    cart.clear();renderCart();form.reset();deliveryPosition=null;$("location-status").textContent="";toast("Commande enregistrée !");
+  }catch(err){result.textContent="Erreur : "+(err.message||"connexion impossible")+". Réessaie, ou contacte-nous sur WhatsApp en précisant que la commande n’a pas été enregistrée.";}
+  finally{submit.disabled=false;submit.textContent="Enregistrer la commande + WhatsApp ↗";}
+});
 $("year").textContent=new Date().getFullYear();renderProducts();renderCart();
 
 // PWA installation on supported browsers.
