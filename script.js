@@ -1,4 +1,4 @@
-// Crustella Cloud Kitchen. WhatsApp handoff only; no database connected yet.
+// Crustella Cloud Kitchen. WhatsApp order handoff; Supabase backend will be connected later.
 const WHATSAPP_NUMBER="21694027423";
 const products=[
 {id:"m-normal",name:"Makloub l’ordinaire",category:"makloub",price:8,emoji:"🥙",desc:"Le classique généreux, préparé à la commande."},
@@ -28,3 +28,23 @@ function closeCart(){$("overlay").hidden=true;document.body.style.overflow=""}
 $("close-cart").addEventListener("click",closeCart);$("overlay").addEventListener("click",e=>{if(e.target===$("overlay"))closeCart()});document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("overlay").hidden)closeCart()});
 $("checkout").addEventListener("submit",e=>{e.preventDefault();if(!count()){toast("Ton panier est vide.");return}const f=new FormData(e.currentTarget),name=String(f.get("name")||"").trim(),phone=String(f.get("phone")||"").trim(),address=String(f.get("address")||"").trim(),note=String(f.get("note")||"").trim();if(!name||!phone||!address){toast("Complète les champs obligatoires.");return}const lines=products.filter(p=>cart.has(p.id)).map(p=>`• ${p.name} x${cart.get(p.id)} — ${money(p.price*cart.get(p.id))}`);const msg=["🍔 *NOUVELLE COMMANDE — CRUSTELLA*","",...lines,"","*Total estimé : "+money(total())+"*","*Paiement : à la livraison*","","*Client :* "+name,"*Téléphone :* "+phone,"*Adresse :* "+address,note?"*Note :* "+note:"","Merci de confirmer la commande et le délai de livraison."].filter(Boolean).join("\n");window.open("https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(msg),"_blank","noopener,noreferrer")});
 $("year").textContent=new Date().getFullYear();renderProducts();renderCart();
+
+// PWA installation on supported browsers.
+let deferredInstallPrompt=null;
+const installButton=$("install-app");
+window.addEventListener("beforeinstallprompt",event=>{
+  event.preventDefault();
+  deferredInstallPrompt=event;
+  installButton.hidden=false;
+});
+installButton?.addEventListener("click",async()=>{
+  if(!deferredInstallPrompt){toast("Sur Android, ouvre le menu du navigateur puis « Installer l’application ».");return}
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt=null;
+  installButton.hidden=true;
+});
+window.addEventListener("appinstalled",()=>{installButton.hidden=true;toast("Crustella est installée !")});
+if("serviceWorker" in navigator && location.protocol.startsWith("http")){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(err=>console.warn("PWA offline cache unavailable",err)));
+}
