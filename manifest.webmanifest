@@ -1,0 +1,19 @@
+{
+  "name": "Crustella Cloud Kitchen",
+  "short_name": "Crustella",
+  "description": "Commande makloub et baguettes farcies.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff9f3",
+  "theme_color": "#f47721",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
