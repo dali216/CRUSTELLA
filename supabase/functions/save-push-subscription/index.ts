@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // Authenticated admin-only registration endpoint for browser Push subscriptions.
+// Deployment retry: use the pinned Supabase CLI version in GitHub Actions.
 const URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
@@ -11,7 +12,7 @@ Deno.serve(async req => {
   if(req.headers.get("origin") && req.headers.get("origin")!==ALLOWED_ORIGIN) return json(403,{error:"Origin not allowed"});
   if(req.method!=="POST") return json(405,{error:"Method not allowed"});
   if(!URL||!SERVICE_KEY||!ANON_KEY) return json(500,{error:"Function is not configured"});
-  const token=(req.headers.get("authorization")||"").replace(/^Bearer\s+/i,"");
+  const token=(req.headers.get("authorization")||"").replace(/^Bearer\\s+/i,"");
   if(!token) return json(401,{error:"Login required"});
   const authClient=createClient(URL,ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
   const {data:userData,error:userError}=await authClient.auth.getUser(token);
