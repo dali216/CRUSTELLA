@@ -9,7 +9,7 @@ White/orange mobile-first ordering website for the Tunisian Crustella Cloud Kitc
 - Cash on delivery.
 - Orders saved securely in Supabase and managed from the private Admin Dashboard.
 - Optional consent-based GPS location for delivery; customer tracking link hides personal address and phone.
-- Progressive Web App (PWA) manifest and service worker for supported install/offline shell.
+- Progressive Web App (PWA) with offline app shell, iPhone/iPad Add-to-Home-Screen guidance, native share, and Android install prompt.\n- Smart cart upsells for optional extras (no forced add-ons).
 - Android WebView wrapper project under `android/`; GitHub Actions builds a debug APK.
 - Admin dashboard with sign-in, live order updates, status changes, browser notifications, and map link for delivery.
 
@@ -19,7 +19,7 @@ Expected GitHub Pages address: https://dali216.github.io/CRUSTELLA/
 
 To publish/check it: **Settings → Pages → Build and deployment → Deploy from a branch → main → /(root)**. Save and wait for deployment.
 
-## Android APK
+## iPhone / iPad\n\nOpen the published website in Safari, tap Share → Add to Home Screen, enable “Open as Web App” if shown, then tap Add. This creates a home-screen web app without App Store publishing. Web Push notifications on iOS require an installed web app, a supported iOS version, user permission, and a separately configured push service; the current admin dashboard uses browser notifications while it is open.\n\n## Android APK
 Every push to `main` should start the workflow **Build Crustella Android APK**. Open the repository's **Actions** tab, choose the latest successful run, and download the artifact named `crustella-debug-apk`. This is a debug APK for testing/installing; it is not a Play Store release.
 
 The Android wrapper loads the hosted website, so GitHub Pages must be published and the phone needs internet access for live ordering. PWA installation from Chrome on Android is another installable option and does not require an APK.
