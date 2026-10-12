@@ -28,19 +28,42 @@ function closeCart(){$("overlay").hidden=true;document.body.style.overflow=""}
 $("close-cart").addEventListener("click",closeCart);$("overlay").addEventListener("click",e=>{if(e.target===$("overlay"))closeCart()});document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("overlay").hidden)closeCart()});
 let deliveryPosition=null;
 const locationButton=$("get-location");
-locationButton?.addEventListener("click",()=>{
-  const consent=$("checkout").elements.namedItem("gpsConsent");
+function requestDeliveryLocation(){
   const status=$("location-status");
+  const consent=$("checkout").elements.namedItem("gpsConsent");
   if(!consent?.checked){status.textContent="Coche d’abord la case de consentement. Le GPS reste facultatif.";return;}
-  if(!navigator.geolocation){status.textContent="La géolocalisation n’est pas disponible sur cet appareil.";return;}
-  status.textContent="Demande d’autorisation GPS…";
-  navigator.geolocation.getCurrentPosition(pos=>{
+  if(!window.isSecureContext){status.textContent="Le GPS nécessite une connexion HTTPS. Ouvre le site officiel Crustella.";return;}
+  if(!navigator.geolocation){status.textContent="La géolocalisation n’est pas prise en charge par ce navigateur. Vérifie les réglages de localisation.";return;}
+  if(locationButton)locationButton.disabled=true;
+  status.textContent="Recherche de ta position GPS… Autorise la localisation si le navigateur le demande.";
+  const finish=()=>{if(locationButton)locationButton.disabled=false;};
+  const success=pos=>{
     deliveryPosition={lat:pos.coords.latitude,lng:pos.coords.longitude};
-    status.textContent="Position obtenue. Elle sera envoyée uniquement avec ta commande."; 
-  },err=>{deliveryPosition=null;status.textContent=err.code===1?"Autorisation refusée. Tu peux commander avec l’adresse écrite.":"Position indisponible. Tu peux continuer sans GPS.";},{enableHighAccuracy:false,timeout:10000,maximumAge:60000});
-});
+    status.textContent="Position GPS obtenue (précision approximative : "+Math.round(pos.coords.accuracy)+" m). Elle sera envoyée avec ta commande.";
+    finish();
+  };
+  const failure=err=>{
+    if(err.code===1)status.textContent="Autorisation GPS refusée. Autorise la localisation pour ce site dans les réglages du navigateur, puis réessaie.";
+    else if(err.code===2)status.textContent="Position introuvable. Active la localisation/GPS du téléphone et réessaie.";
+    else if(err.code===3)status.textContent="La recherche GPS a pris trop de temps. Active la localisation et réessaie.";
+    else status.textContent="GPS indisponible. Tu peux toujours commander avec l’adresse écrite.";
+    finish();
+  };
+  navigator.geolocation.getCurrentPosition(success,err=>{
+    if(err.code===1){failure(err);return;}
+    status.textContent="Recherche GPS plus précise…";
+    navigator.geolocation.getCurrentPosition(success,failure,{enableHighAccuracy:true,timeout:20000,maximumAge:0});
+  },{enableHighAccuracy:false,timeout:12000,maximumAge:0});
+}
+locationButton?.addEventListener("click",requestDeliveryLocation);
 $("checkout").elements.namedItem("gpsConsent")?.addEventListener("change",e=>{
-  if(!e.target.checked){deliveryPosition=null;$("location-status").textContent="Le partage GPS est désactivé.";}
+  if(!e.target.checked){
+    deliveryPosition=null;
+    $("location-status").textContent="Le partage GPS est désactivé.";
+  }else{
+    deliveryPosition=null;
+    $("location-status").textContent="Consentement enregistré. Appuie sur « Utiliser ma position » puis autorise la localisation.";
+  }
 });
 $("checkout").addEventListener("submit",async e=>{
   e.preventDefault();
