@@ -4,6 +4,12 @@
   const $ = id => document.getElementById(id);
   const statusLabels = {new:"Nouvelle",confirmed:"Confirmée",preparing:"En préparation",out_for_delivery:"En livraison",delivered:"Livrée",cancelled:"Annulée"};
   let client = null, channel = null, orders = [];
+  const PUSH_PUBLIC_KEY = "BKcrUVQy1N7HRNeMJJ2dVrLrQNZaOKQuQbSHy-jWTjocTRkmokiLYRVAmIJ-HQiaCcHTRxmnAf70lM22T0_ImwE";
+  function base64UrlToUint8Array(value) {
+    const padding = "=".repeat((4 - value.length % 4) % 4);
+    const base64 = (value + padding).replace(/-/g, "+").replace(/_/g, "/");
+    return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+  }
   const money = mills => (Number(mills || 0) / 1000).toLocaleString("fr-TN",{minimumFractionDigits:3,maximumFractionDigits:3}) + " DT";
   const safe = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   function message(id, text){ $(id).textContent = text || ""; }
@@ -87,12 +93,26 @@
   $("logout-btn").addEventListener("click",async()=>{if(channel)await client.removeChannel(channel);await client.auth.signOut();showLogin();});
   $("refresh-btn").addEventListener("click",loadOrders);
   $("notifications-btn")?.addEventListener("click",async()=>{
-    try{const AudioCtx=window.AudioContext||window.webkitAudioContext;if(AudioCtx){alertAudioContext=alertAudioContext||new AudioCtx();if(alertAudioContext.state==="suspended")await alertAudioContext.resume();}}
-    catch{}
-    if(!("Notification" in window)){message("dashboard-message","Son activé si le navigateur le permet. Les notifications système ne sont pas prises en charge ici; garde le tableau de bord ouvert.");return;}
-    let permission=Notification.permission;
-    if(permission==="default")permission=await Notification.requestPermission();
-    message("dashboard-message",permission==="granted"?"Alertes activées. Garde le tableau de bord ouvert pour recevoir les nouvelles commandes en temps réel.":"Notifications bloquées : autorise-les dans les réglages du navigateur.");
+    try {
+      const AudioCtx=window.AudioContext||window.webkitAudioContext;
+      if(AudioCtx){alertAudioContext=alertAudioContext||new AudioCtx();if(alertAudioContext.state==="suspended")await alertAudioContext.resume();}
+      if(!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) {
+        message("dashboard-message","Push non pris en charge par ce navigateur. Sur iPhone, ajoute d’abord le site à l’écran d’accueil puis ouvre-le depuis son icône."); return;
+      }
+      let permission=Notification.permission;
+      if(permission==="default")permission=await Notification.requestPermission();
+      if(permission!=="granted"){message("dashboard-message","Autorise les notifications Crustella dans les réglages du navigateur puis réessaie.");return;}
+      const session=(await client.auth.getSession()).data?.session;
+      if(!session){message("dashboard-message","Reconnecte-toi à l’espace Admin puis réessaie.");return;}
+      const registration=await navigator.serviceWorker.register("./sw.js",{scope:"./"});
+      await navigator.serviceWorker.ready;
+      let subscription=await registration.pushManager.getSubscription();
+      if(!subscription)subscription=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:base64UrlToUint8Array(PUSH_PUBLIC_KEY)});
+      const response=await fetch(cfg.url+"/functions/v1/save-push-subscription",{method:"POST",headers:{"Content-Type":"application/json","apikey":cfg.publishableKey,"Authorization":"Bearer "+session.access_token},body:JSON.stringify({subscription:subscription.toJSON()})});
+      const result=await response.json().catch(()=>({}));
+      if(!response.ok||!result.ok)throw new Error(result.error||"Impossible d’enregistrer ce téléphone.");
+      message("dashboard-message","✅ Notifications Push activées sur cet appareil. Tu recevras les nouvelles commandes même si l’Admin n’est pas ouvert.");
+    } catch(error) { message("dashboard-message","Activation Push impossible : "+(error?.message||"vérifie les autorisations et réessaie.")); }
   });
   $("status-filter").addEventListener("change",render);$("order-search").addEventListener("input",render);
   $("orders-list").addEventListener("change",async e=>{
