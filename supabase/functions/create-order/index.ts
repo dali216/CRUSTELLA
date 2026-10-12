@@ -73,6 +73,7 @@ Deno.serve(async (req) => {
     customer_name: name,
     customer_phone: phone,
     phone: phone,
+    address: address,
     delivery_address: address,
     customer_note: note || null,
     items,
