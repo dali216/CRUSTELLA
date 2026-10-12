@@ -72,6 +72,7 @@ Deno.serve(async (req) => {
   const { data, error } = await db.from("orders").insert({
     customer_name: name,
     customer_phone: phone,
+    phone: phone,
     delivery_address: address,
     customer_note: note || null,
     items,
