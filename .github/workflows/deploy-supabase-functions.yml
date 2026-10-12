@@ -28,3 +28,4 @@ jobs:
           fi
           supabase functions deploy create-order --project-ref bnwsnhhvrbwvjwvywjgc
           supabase functions deploy track-order --project-ref bnwsnhhvrbwvjwvywjgc
+          supabase functions deploy save-push-subscription --project-ref bnwsnhhvrbwvjwvywjgc
