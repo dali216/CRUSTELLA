@@ -21,7 +21,8 @@ function renderCart(){ $("count").textContent=count();$("total").textContent=mon
 function toast(t){$("toast").textContent=t;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2200)}
 document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x===b));renderProducts(b.dataset.filter)}));
 $("products").addEventListener("click",e=>{const b=e.target.closest("[data-add]");if(b){add(b.dataset.add);toast("Ajouté au panier !")}});
-$("cart-items").addEventListener("click",e=>{const b=e.target.closest("[data-delta]");if(b)add(b.dataset.id,Number(b.dataset.delta))});\n$("cart-upsell")?.addEventListener("click",e=>{const b=e.target.closest("[data-upsell]");if(b){add(b.dataset.upsell);toast("Extra ajouté au panier !")}});
+$("cart-items").addEventListener("click",e=>{const b=e.target.closest("[data-delta]");if(b)add(b.dataset.id,Number(b.dataset.delta))});
+$("cart-upsell")?.addEventListener("click",e=>{const b=e.target.closest("[data-upsell]");if(b){add(b.dataset.upsell);toast("Extra ajouté au panier !")}});
 $("open-cart").addEventListener("click",()=>{$("overlay").hidden=false;document.body.style.overflow="hidden"});
 function closeCart(){$("overlay").hidden=true;document.body.style.overflow=""}
 $("close-cart").addEventListener("click",closeCart);$("overlay").addEventListener("click",e=>{if(e.target===$("overlay"))closeCart()});document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("overlay").hidden)closeCart()});
