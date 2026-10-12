@@ -68,7 +68,9 @@ $("year").textContent=new Date().getFullYear();renderProducts();renderCart();
 // PWA installation on supported browsers.
 let deferredInstallPrompt=null;
 const installButton=$("install-app");
-const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);\nif(isIOS)installButton.hidden=false;\nwindow.addEventListener("beforeinstallprompt",event=>{
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+if(isIOS)installButton.hidden=false;
+window.addEventListener("beforeinstallprompt",event=>{
   event.preventDefault();
   deferredInstallPrompt=event;
   installButton.hidden=false;
@@ -80,7 +82,10 @@ installButton?.addEventListener("click",async()=>{
   deferredInstallPrompt=null;
   installButton.hidden=true;
 });
-window.addEventListener("appinstalled",()=>{installButton.hidden=true;toast("Crustella est installée !")});\n$("close-install-help")?.addEventListener("click",()=> $("install-help")?.close());\n$("install-help")?.addEventListener("click",e=>{if(e.target===$("install-help"))$("install-help").close()});\n$("share-app")?.addEventListener("click",async()=>{const shareData={title:"Crustella Cloud Kitchen",text:"Jou3ak malouch a3dhar — découvre le menu Crustella !",url:location.href};try{if(navigator.share)await navigator.share(shareData);else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(location.href);toast("Lien Crustella copié !");}else toast("Copie le lien depuis la barre d’adresse.");}catch(err){if(err?.name!=="AbortError")toast("Partage indisponible sur ce navigateur.");}});
+window.addEventListener("appinstalled",()=>{installButton.hidden=true;toast("Crustella est installée !")});
+$("close-install-help")?.addEventListener("click",()=> $("install-help")?.close());
+$("install-help")?.addEventListener("click",e=>{if(e.target===$("install-help"))$("install-help").close()});
+$("share-app")?.addEventListener("click",async()=>{const shareData={title:"Crustella Cloud Kitchen",text:"Jou3ak malouch a3dhar — découvre le menu Crustella !",url:location.href};try{if(navigator.share)await navigator.share(shareData);else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(location.href);toast("Lien Crustella copié !");}else toast("Copie le lien depuis la barre d’adresse.");}catch(err){if(err?.name!=="AbortError")toast("Partage indisponible sur ce navigateur.");}});
 if("serviceWorker" in navigator && location.protocol.startsWith("http")){
   window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(err=>console.warn("PWA offline cache unavailable",err)));
 }
