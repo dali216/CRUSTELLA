@@ -1,7 +1,7 @@
 {
   "name": "Crustella Cloud Kitchen",
   "short_name": "Crustella",
-  "description": "Commande makloub et baguettes farcies.",
+  "description": "Commande makloub et baguettes farcies.",\n  "categories": ["food", "shopping"],\n  "orientation": "portrait-primary",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
