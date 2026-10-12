@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import webpush from "npm:web-push@3.6.7";
 
 const URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -87,5 +88,29 @@ Deno.serve(async (req) => {
     console.error("order insert failed", error?.message);
     return json(500, { ok: false, error: "Impossible d’enregistrer la commande. Réessaie dans un instant." });
   }
+  // Best-effort Push: a notification failure must never undo a valid order.
+  const vapidPublic = Deno.env.get("VAPID_PUBLIC_KEY");
+  const vapidPrivate = Deno.env.get("VAPID_PRIVATE_KEY");
+  if (vapidPublic && vapidPrivate) {
+    try {
+      webpush.setVapidDetails(Deno.env.get("VAPID_SUBJECT") || "mailto:admin@crustella.tn", vapidPublic, vapidPrivate);
+      const { data: subscriptions, error: subError } = await db.from("admin_push_subscriptions").select("id,subscription");
+      if (subError) console.error("push subscription lookup failed", subError.message);
+      for (const row of subscriptions || []) {
+        try {
+          await webpush.sendNotification(row.subscription, JSON.stringify({
+            title: "Nouvelle commande Crustella",
+            body: "Commande #" + data.order_number + " — " + name + " · " + (total / 1000).toFixed(3) + " DT",
+            url: "https://dali216.github.io/CRUSTELLA/admin.html",
+            tag: "crustella-order-" + data.id
+          }));
+        } catch (pushError) {
+          const statusCode = Number((pushError as { statusCode?: number })?.statusCode || 0);
+          console.error("push delivery failed", statusCode || String(pushError));
+          if (statusCode === 404 || statusCode === 410) await db.from("admin_push_subscriptions").delete().eq("id", row.id);
+        }
+      }
+    } catch (pushError) { console.error("push notification setup failed", String(pushError)); }
+  } else console.warn("Push not configured: set VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY in Supabase secrets.");
   return json(201, { ok: true, order_number: data.order_number, tracking_token: data.tracking_token, total_millimes: data.total_millimes, created_at: data.created_at });
 });
