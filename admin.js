@@ -16,7 +16,7 @@
     $("stat-preparing").textContent = orders.filter(o=>o.status==="preparing").length;
     $("stat-sales").textContent = money(orders.filter(o=>o.status==="delivered").reduce((s,o)=>s+Number(o.total_millimes||0),0));
     const filter=$("status-filter").value, q=$("order-search").value.trim().toLocaleLowerCase();
-    const list=orders.filter(o=>(filter==="all"||o.status===filter) && (!q||[o.customer_name,o.customer_phone,String(o.order_number||"")].some(v=>String(v||"").toLocaleLowerCase().includes(q))));
+    const list=orders.filter(o=>(filter==="all"||o.status===filter) && (!q||[o.customer_name,o.customer_phone,o.phone,String(o.order_number||"")].some(v=>String(v||"").toLocaleLowerCase().includes(q))));
     if(!list.length){$("orders-list").innerHTML='<div class="empty-state">Aucune commande pour ce filtre. Les nouvelles commandes apparaîtront ici.</div>';return;}
     $("orders-list").innerHTML=list.map(o=>{
       const items=Array.isArray(o.items)?o.items.map(i=>safe(i.name||i.title||i.id)+" × "+safe(i.quantity||i.qty||1)).join(" · "):"";
@@ -25,25 +25,51 @@
       return '<article class="order"><div><h3>Commande #'+safe(o.order_number||String(o.id||"").slice(0,8))+' · '+safe(o.customer_name)+'</h3><p>📞 <a href="tel:'+safe(o.customer_phone)+'">'+safe(o.customer_phone)+'</a> · '+safe(dateLabel(o.created_at))+'</p><p>📍 '+safe(o.delivery_address)+' · <a target="_blank" rel="noopener" href="'+mapUrl+'">Ouvrir la carte ↗</a></p><p>🍔 '+items+'</p>'+(o.customer_note?'<p>📝 '+safe(o.customer_note)+'</p>':'')+'<p class="order-total">'+money(o.total_millimes)+' · Paiement à la livraison</p></div><div class="order-actions"><span class="status '+safe(o.status)+'">'+safe(statusLabels[o.status]||o.status)+'</span><select aria-label="Changer le statut" data-status="'+safe(o.id)+'">'+statusOpts+'</select><button class="admin-btn secondary" data-track="'+safe(o.id)+'">Lien suivi</button></div></article>';
     }).join("");
   }
-  async function loadOrders(){
+  let knownOrderIds=new Set(), initialOrdersLoaded=false, pollTimer=null;
+  let alertAudioContext=null;
+  function alertNewOrder(o){
+    const title="Nouvelle commande Crustella";
+    const body="Commande #"+(o.order_number||"")+" — "+(o.customer_name||"Client")+" · "+money(o.total_millimes);
+    message("dashboard-message",title+" : "+body);
+    try{
+      if(alertAudioContext && alertAudioContext.state!=="closed"){
+        const oscillator=alertAudioContext.createOscillator(),gain=alertAudioContext.createGain();
+        oscillator.type="sine";oscillator.frequency.value=880;gain.gain.value=0.12;
+        oscillator.connect(gain);gain.connect(alertAudioContext.destination);oscillator.start();
+        oscillator.stop(alertAudioContext.currentTime+0.35);
+      }
+    }catch{}
+    if("Notification" in window && Notification.permission==="granted"){
+      try{new Notification(title,{body,icon:"icons/icon.svg",tag:"crustella-order-"+(o.id||o.order_number)});}catch{}
+    }
+  }
+  async function loadOrders(silent=false){
     if(!client)return;
-    message("dashboard-message","Chargement des commandes…");
+    if(!silent)message("dashboard-message","Chargement des commandes…");
     const {data,error}=await client.from("orders").select("*").order("created_at",{ascending:false}).limit(200);
     if(error){message("dashboard-message","Impossible de charger les commandes : "+error.message);return;}
-    orders=data||[];render();message("dashboard-message","");
+    const incoming=data||[];
+    if(initialOrdersLoaded){
+      const fresh=incoming.filter(o=>!knownOrderIds.has(o.id));
+      fresh.reverse().forEach(alertNewOrder);
+    }
+    knownOrderIds=new Set(incoming.map(o=>o.id));
+    initialOrdersLoaded=true;
+    orders=incoming;render();
+    if(!silent && !String($("dashboard-message").textContent||"").startsWith("Nouvelle commande"))message("dashboard-message","");
   }
   function watchOrders(){
     if(channel)client.removeChannel(channel);
     channel=client.channel("crustella-admin-orders")
-      .on("postgres_changes",{event:"INSERT",schema:"public",table:"orders"},payload=>{
-        loadOrders();
-        if("Notification" in window && Notification.permission==="granted"){
-          const o=payload.new||{};
-          new Notification("Nouvelle commande Crustella", {body:"Commande #"+(o.order_number||"")+" — "+(o.customer_name||"Client")+" · "+money(o.total_millimes), icon:"icons/icon.svg"});
+      .on("postgres_changes",{event:"INSERT",schema:"public",table:"orders"},()=>loadOrders(true))
+      .on("postgres_changes",{event:"UPDATE",schema:"public",table:"orders"},()=>loadOrders(true))
+      .subscribe((status,error)=>{
+        if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"){
+          message("dashboard-message","Temps réel indisponible ("+status+"). Actualisation automatique activée.");
         }
-      })
-      .on("postgres_changes",{event:"UPDATE",schema:"public",table:"orders"},()=>loadOrders())
-      .subscribe();
+      });
+    if(pollTimer)clearInterval(pollTimer);
+    pollTimer=setInterval(()=>{if(document.visibilityState==="visible")loadOrders(true);},15000);
   }
   async function verifyAdmin(session){
     if(!session){showLogin();return;}
@@ -61,9 +87,12 @@
   $("logout-btn").addEventListener("click",async()=>{if(channel)await client.removeChannel(channel);await client.auth.signOut();showLogin();});
   $("refresh-btn").addEventListener("click",loadOrders);
   $("notifications-btn")?.addEventListener("click",async()=>{
-    if(!("Notification" in window)){message("dashboard-message","Les notifications navigateur ne sont pas prises en charge ici.");return;}
-    const permission=await Notification.requestPermission();
-    message("dashboard-message",permission==="granted"?"Notifications activées pour les nouvelles commandes.":"Notifications non autorisées par le navigateur.");
+    try{const AudioCtx=window.AudioContext||window.webkitAudioContext;if(AudioCtx){alertAudioContext=alertAudioContext||new AudioCtx();if(alertAudioContext.state==="suspended")await alertAudioContext.resume();}}
+    catch{}
+    if(!("Notification" in window)){message("dashboard-message","Son activé si le navigateur le permet. Les notifications système ne sont pas prises en charge ici; garde le tableau de bord ouvert.");return;}
+    let permission=Notification.permission;
+    if(permission==="default")permission=await Notification.requestPermission();
+    message("dashboard-message",permission==="granted"?"Alertes activées. Garde le tableau de bord ouvert pour recevoir les nouvelles commandes en temps réel.":"Notifications bloquées : autorise-les dans les réglages du navigateur.");
   });
   $("status-filter").addEventListener("change",render);$("order-search").addEventListener("input",render);
   $("orders-list").addEventListener("change",async e=>{
