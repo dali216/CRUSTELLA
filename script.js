@@ -12,6 +12,8 @@ const products=[
 {id:"x-ham",name:"Supplément jambon",category:"extras",price:1,emoji:"🥓",desc:"Un supplément gourmand."}
 ];
 const cart=new Map(),$=id=>document.getElementById(id),money=n=>n.toFixed(3).replace(".",",")+" DT";
+// Load one-time custom compositions created in composer.html and put them directly in the cart.
+try{const pending=JSON.parse(localStorage.getItem("crustella-custom-products")||"[]");if(Array.isArray(pending)){pending.filter(p=>p&&typeof p.id==="string"&&p.id.startsWith("custom-")).slice(-10).forEach(p=>{products.push(p);cart.set(p.id,1)});}localStorage.removeItem("crustella-custom-products");}catch(e){console.warn("Custom composition could not be loaded",e);}
 const label=c=>({makloub:"MAKLOUB",baguette:"BAGUETTE FARCIE",extras:"EXTRA"}[c]||c);
 function renderProducts(filter="all"){$("products").innerHTML=products.filter(p=>filter==="all"||p.category===filter).map(p=>`<article class="card"><div class="food"><span class="tag">${label(p.category)}</span>${p.emoji}</div><div class="details"><div class="title-row"><h3>${p.name}</h3><span class="price">${money(p.price)}</span></div><p>${p.desc}</p><button class="add" data-add="${p.id}">＋ Ajouter au panier</button></div></article>`).join("")}
 function total(){return products.reduce((s,p)=>s+p.price*(cart.get(p.id)||0),0)}
@@ -73,7 +75,7 @@ $("checkout").addEventListener("submit",async e=>{
   if(!name||!phone||!address){toast("Complète les champs obligatoires.");return;}
   const cfg=window.CRUSTELLA_SUPABASE||{}, result=$("order-result"), submit=form.querySelector('button[type="submit"]');
   if(!cfg.url||!cfg.publishableKey){result.textContent="Service de commande indisponible : configuration Supabase manquante.";return;}
-  const payload={customer_name:name,customer_phone:phone,delivery_address:address,customer_note:note||null,items:products.filter(p=>cart.has(p.id)).map(p=>({id:p.id,quantity:cart.get(p.id)})),payment_method:"cash_on_delivery"};
+  const payload={customer_name:name,customer_phone:phone,delivery_address:address,customer_note:note||null,items:products.filter(p=>cart.has(p.id)).map(p=>p.id.startsWith("custom-")?({id:p.id,quantity:cart.get(p.id),custom_type:p.category,custom_ingredients:p.customIngredients||[]}):({id:p.id,quantity:cart.get(p.id)})),payment_method:"cash_on_delivery"};
   if(f.get("gpsConsent")==="on"&&deliveryPosition){payload.delivery_lat=deliveryPosition.lat;payload.delivery_lng=deliveryPosition.lng;}
   submit.disabled=true;submit.textContent="Enregistrement…";result.textContent="Enregistrement sécurisé de la commande…";
   try{
