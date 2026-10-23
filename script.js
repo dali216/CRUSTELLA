@@ -15,7 +15,13 @@ const cart=new Map(),$=id=>document.getElementById(id),money=n=>n.toFixed(3).rep
 // Load one-time custom compositions created in composer.html and put them directly in the cart.
 try{const pending=JSON.parse(localStorage.getItem("crustella-custom-products")||"[]");if(Array.isArray(pending)){pending.filter(p=>p&&typeof p.id==="string"&&p.id.startsWith("custom-")).slice(-10).forEach(p=>{products.push(p);cart.set(p.id,1)});}localStorage.removeItem("crustella-custom-products");}catch(e){console.warn("Custom composition could not be loaded",e);}
 const label=c=>({makloub:"MAKLOUB",baguette:"BAGUETTE FARCIE",extras:"EXTRA"}[c]||c);
-function renderProducts(filter="all"){$("products").innerHTML=products.filter(p=>filter==="all"||p.category===filter).map(p=>`<article class="card"><div class="food"><span class="tag">${label(p.category)}</span>${p.emoji}</div><div class="details"><div class="title-row"><h3>${p.name}</h3><span class="price">${money(p.price)}</span></div><p>${p.desc}</p><button class="add" data-add="${p.id}">＋ Ajouter au panier</button></div></article>`).join("")}
+const foodPhotos={
+makloub:"https://images.unsplash.com/photo-1553909489-cd47e0ef937f?auto=format&fit=crop&w=900&q=85",
+baguette:"https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=900&q=85",
+pizza:"https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=900&q=85",
+extras:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=900&q=85"
+};
+function renderProducts(filter="all"){$("products").innerHTML=products.filter(p=>filter==="all"||p.category===filter).map(p=>{const photo=foodPhotos[p.category]||foodPhotos.makloub;return `<article class="card"><div class="food food-photo"><img src="${photo}" alt="${p.name}" loading="lazy"><span class="tag">${label(p.category)}</span></div><div class="details"><div class="title-row"><h3>${p.name}</h3><span class="price">${money(p.price)}</span></div><p>${p.desc}</p><button class="add" data-add="${p.id}">＋ Ajouter au panier</button></div></article>`}).join("")}
 function total(){return products.reduce((s,p)=>s+p.price*(cart.get(p.id)||0),0)}
 function count(){return [...cart.values()].reduce((s,n)=>s+n,0)}
 function add(id,delta=1){const n=(cart.get(id)||0)+delta;if(n<=0)cart.delete(id);else cart.set(id,n);renderCart()}
