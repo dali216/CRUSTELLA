@@ -51,9 +51,31 @@ Deno.serve(async (req) => {
     if (!raw || typeof raw !== "object") return json(400, { ok: false, error: "Article invalide" });
     const item = raw as Record<string, unknown>;
     const id = typeof item.id === "string" ? item.id : "";
-    const product = catalog[id];
     const quantity = Number(item.quantity);
-    if (!product || !Number.isInteger(quantity) || quantity < 1 || quantity > 20) return json(400, { ok: false, error: "Article ou quantité invalide" });
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 20) return json(400, { ok: false, error: "Article ou quantité invalide" });
+
+    let product = catalog[id];
+    // Custom products are priced server-side; never trust a price sent by the browser.
+    if (id.startsWith("custom-")) {
+      const type = item.custom_type;
+      const bases: Record<string, number> = { makloub: 8000, pizza: 8000, baguette: 9000 };
+      const ingredientPrices: Record<string, number> = {
+        "Mozzarella": 1500, "Fromage Rodha": 1500, "Fromage fondu": 1000,
+        "Poulet": 2500, "Escalope panée": 2500, "Thon": 2000, "Jambon": 1000, "Crevettes": 3000,
+        "Sauce tomate": 0, "Mayonnaise": 500, "Harissa": 0, "Oignon": 500,
+        "Oignon caramélisé": 1000, "Frites": 2000
+      };
+      const ingredients = item.custom_ingredients;
+      if (!(type in bases) || !Array.isArray(ingredients) || ingredients.length > 14 ||
+          ingredients.some((v) => typeof v !== "string" || !(v in ingredientPrices))) {
+        return json(400, { ok: false, error: "Composition personnalisée invalide" });
+      }
+      const uniqueIngredients = [...new Set(ingredients as string[])];
+      const price = bases[type as string] + uniqueIngredients.reduce((sum, ingredient) => sum + ingredientPrices[ingredient], 0);
+      const typeNames: Record<string, string> = { makloub: "Makloub personnalisé", pizza: "Pizza personnalisée", baguette: "Baguette farcie personnalisée" };
+      product = { name: typeNames[type as string] + (uniqueIngredients.length ? " (" + uniqueIngredients.join(", ") + ")" : ""), price };
+    }
+    if (!product) return json(400, { ok: false, error: "Article ou quantité invalide" });
     const line = product.price * quantity;
     total += line;
     items.push({ id, name: product.name, quantity, unit_price_millimes: product.price, line_total_millimes: line });
