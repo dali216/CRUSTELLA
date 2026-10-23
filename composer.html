@@ -19,6 +19,25 @@ button,.pill{transition:transform .18s ease,box-shadow .18s ease}
 button:hover{transform:translateY(-1px)}
 .btn{box-shadow:0 8px 20px #f4772125}
 @media(max-width:720px){.layout{padding-top:26px}.builder{gap:16px}}
+
+/* Mockup-matched mobile composer surface */
+:root{--o:#ff6508;--od:#e95000;--ink:#21160f;--muted:#78695d;--cream:#fff8ef;--line:#efdfd0}
+body{background:radial-gradient(ellipse at 50% 0,#fff0df 0,#fffaf5 430px,#fff 900px)!important;font-family:'DM Sans',Arial,sans-serif}
+.top{padding:13px clamp(14px,4vw,50px);background:#fffaf5ed;backdrop-filter:blur(12px);border-bottom:1px solid #f0e2d5}
+.brand{color:#e95000;letter-spacing:-.04em}.brand b{border-radius:50%;background:#ff6508}
+.pill{border-radius:999px;padding:11px 15px;background:#fff}
+.layout{max-width:1220px;padding-top:32px}
+.intro{text-align:left;margin:0 0 24px}.intro .eyebrow{letter-spacing:.16em}.intro h1{font-size:clamp(34px,5vw,50px);letter-spacing:-.06em}.intro p{max-width:560px;font-size:13px}
+.builder{grid-template-columns:minmax(0,1fr) minmax(340px,.85fr);gap:18px}
+.preview-card{background:#fff4e7;border:1px solid #f0ddc8;border-radius:24px;box-shadow:0 12px 35px #6b37100b;padding:20px}
+.preview-head h2{font-size:19px;letter-spacing:-.03em}
+.stage{background:radial-gradient(ellipse,#ffe4c8,#fff4e7 72%);border-radius:18px;margin:8px 0 15px}
+.options{border:1px solid #f0e2d5;border-radius:24px;box-shadow:0 12px 35px #6b37100b;padding:22px}
+.options h2{letter-spacing:-.04em}.type{border-radius:13px;border-color:#efdfd0}.type.active{border:2px solid #ff6508;background:#fff0e2;color:#d94c00}
+.choice{border-radius:12px;border-color:#efdfd0}.choice:has(input:checked){background:#fff1e5;border-color:#ff6508}
+.bottom{gap:15px}.total strong{color:#e95000}.btn{background:#ff6508;border-radius:999px;box-shadow:0 8px 20px #ff650825}
+@media(max-width:760px){.top{padding:12px 14px}.layout{padding:24px 13px 90px}.intro{margin-bottom:16px}.intro h1{font-size:36px}.builder{grid-template-columns:1fr;gap:13px}.preview-card{padding:15px;border-radius:20px}.stage{height:220px}.options{padding:17px;border-radius:20px}.type-grid{gap:7px}.type{padding:11px 4px}.choices{gap:7px}.choice{padding:10px 8px;font-size:11px}.bottom .btn{padding:12px 14px}}
+
 </style></head>
 <body>
 <header class="top"><a class="brand" href="index.html"><b>C</b> CRUSTELLA</a><a class="pill" href="index.html">← Retour au menu</a></header>
