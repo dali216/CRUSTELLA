@@ -30,3 +30,71 @@ body{background:#fffdfb;color:var(--ink)}
 .cta{background:linear-gradient(115deg,#f47721,#e96816);border-radius:30px 30px 0 0}
 footer{background:#fffaf5}
 @media(max-width:760px){.food.food-photo{height:145px}.products{gap:13px}.details{padding:13px}}
+
+
+/* CRUSTELLA APP REDESIGN — cream canvas, vivid orange actions, editorial food-first layout */
+:root{--o:#ff6508;--od:#e95000;--ink:#21160f;--muted:#75675d;--cream:#fff8ef;--line:#f0e3d7}
+body{font-family:'DM Sans',sans-serif;background:#fffaf4;color:var(--ink)}
+.header{height:76px;padding:0 clamp(16px,4vw,64px);background:#fffaf4;border-bottom:1px solid #f4e5d7}
+.brand{letter-spacing:-.03em;font-size:19px;color:#e95a0b}
+.brand small{letter-spacing:.16em;color:#8b796b}
+.brand .logo{border-radius:50%;background:#ff6508;box-shadow:none}
+.header-actions .pill{border-color:transparent;background:transparent;border-radius:12px;padding:11px 13px}
+.header-actions .pill:last-child{background:#ff6508;color:white;box-shadow:0 7px 16px #ff65082e}
+.hero{position:relative;isolation:isolate;min-height:430px;padding:50px clamp(20px,7vw,100px);grid-template-columns:.88fr 1.12fr;gap:10px;background:linear-gradient(100deg,#fff8ef 0%,#fff3e4 45%,#f9d2ad 100%);border-radius:0 0 28px 28px}
+.hero:after{content:"";position:absolute;inset:0 0 0 45%;z-index:-1;background:linear-gradient(90deg,#fff3e400,#fff3e400 65%,#fff3e422),url('https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=1400&q=90') center/cover;clip-path:ellipse(78% 90% at 73% 50%);opacity:.98}
+.hero .eyebrow{color:#e95000}
+.hero h1{font-size:clamp(46px,6.2vw,78px);line-height:.99;letter-spacing:-.07em;max-width:500px}
+.hero h1 em{color:#ff6508}
+.intro{font-size:14px;max-width:390px;color:#4e4036;line-height:1.75}
+.hero .btn.dark{background:#ff6508;border-radius:999px;min-width:190px;box-shadow:0 10px 22px #ff65082e}
+.hero .btn[style]{border-radius:999px!important;background:#fff!important;color:#e95000!important;border:1px solid #f3d4bb!important}
+.hero-art{min-height:310px;opacity:0}
+.delivery{display:inline-flex;background:#ffffffc9;border:1px solid #f0ddca;border-radius:999px;padding:9px 13px;margin-top:18px}
+.menu{padding:55px clamp(16px,5vw,72px) 85px}
+.heading h2{font-size:clamp(32px,4vw,46px);letter-spacing:-.06em}
+.heading>p{max-width:230px;line-height:1.6}
+.filters{gap:8px;margin:24px 0}
+.filter{border:1px solid #efdfd0;border-radius:999px;padding:10px 16px;background:#fffaf5;color:#6d594a}
+.filter.active,.filter:hover{background:#ff6508;border-color:#ff6508;color:white}
+.products{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.card{border:1px solid #f0e2d5;border-radius:19px;background:#fff;box-shadow:0 6px 20px #63320c0b;overflow:hidden}
+.card:hover{transform:translateY(-3px);box-shadow:0 13px 28px #63320c16}
+.food.food-photo{height:195px;background:#f6e5d3}
+.food.food-photo img{object-fit:cover}
+.food.food-photo:after{inset:55% 0 0;background:linear-gradient(transparent,#170d0870)}
+.tag{border-radius:999px;color:#e95000;background:#fffaf5;letter-spacing:.04em}
+.details{padding:16px}
+.title-row h3{font-size:16px;letter-spacing:-.025em}
+.price{color:#e95000;font-size:14px}
+.details p{color:#827367;font-size:12px;min-height:35px}
+.add{border:0;background:#fff0e3;color:#df5000;border-radius:999px;padding:12px}
+.add:hover{background:#ff6508;color:#fff}
+.cta{margin:0 4vw 28px;border-radius:24px;background:#ff6508;padding:32px clamp(20px,4vw,54px)}
+.cta h2{color:#fff}
+.cta .light{border-radius:999px}
+footer{border-top:1px solid #f0e3d7;background:#fffaf5;padding:28px 5vw}
+.cart-fab{background:#ff6508;box-shadow:0 12px 30px #ff65083b;border-radius:999px;padding:13px 19px}
+.cart-fab span{background:white;color:#e95000}
+.cart{background:#fffaf5}
+.cart-head h2{letter-spacing:-.05em}
+.cart input,.cart textarea{background:#fff;border-color:#eddfd2;border-radius:12px}
+.cart .btn{border-radius:999px}
+.payment{background:#eff8ef;color:#287849;border-radius:13px}
+.cart-upsell{border-radius:16px;background:#fff0e3;border-color:#f3d8c0}
+.toast{background:#21160f;border-radius:999px}
+@media(max-width:760px){
+ .header{height:65px;padding:0 13px}.brand{font-size:15px;gap:7px}.brand .logo{width:33px;height:33px;font-size:21px}.brand small{font-size:8px}
+ .header-actions{gap:3px}.header-actions .pill{padding:9px 8px;font-size:10px}.header-actions .pill:first-child{display:none}
+ .hero{min-height:600px;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:34px 20px 260px;border-radius:0 0 25px 25px;background:linear-gradient(180deg,#fff8ef 0%,#fff2e3 60%,#f6c99f 100%)}
+ .hero:after{inset:auto 0 0;height:290px;clip-path:none;background:url('https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=1000&q=90') center 48%/cover;opacity:1}
+ .hero h1{font-size:49px;margin-bottom:15px}.intro{font-size:13px;line-height:1.65;max-width:100%}
+ .hero .btn{margin-top:8px!important;padding:14px 18px;font-size:12px}.hero-art{display:none}.delivery{font-size:10px;margin-top:12px}
+ .menu{padding:35px 14px 65px}.heading{gap:8px}.heading h2{font-size:33px}.heading>p{margin:0;font-size:11px}
+ .filters{flex-wrap:nowrap;overflow-x:auto;padding-bottom:5px;margin:19px 0}.filter{white-space:nowrap;padding:10px 13px;font-size:11px}
+ .products{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.food.food-photo{height:145px}.details{padding:11px}.title-row{display:block}.title-row h3{font-size:14px;line-height:1.25}.price{display:block;margin-top:6px;font-size:12px}.details p{font-size:10px;line-height:1.5;min-height:45px;margin:8px 0}.add{font-size:10px;padding:10px 5px}
+ .cta{margin:0 12px 25px;padding:25px 20px;border-radius:20px}.cta h2{font-size:32px}
+ footer{padding-bottom:82px}
+ .cart-fab{bottom:12px;min-width:230px;justify-content:center}
+}
+@media(max-width:370px){.header-actions .pill{padding:8px 6px}.hero h1{font-size:44px}.products{gap:8px}}
