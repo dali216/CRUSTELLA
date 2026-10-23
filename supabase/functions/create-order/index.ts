@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
         "Oignon caramélisé": 1000, "Frites": 2000
       };
       const ingredients = item.custom_ingredients;
-      if (!(type in bases) || !Array.isArray(ingredients) || ingredients.length > 14 ||
+      if (typeof type !== "string" || !(type in bases) || !Array.isArray(ingredients) || ingredients.length > 14 ||
           ingredients.some((v) => typeof v !== "string" || !(v in ingredientPrices))) {
         return json(400, { ok: false, error: "Composition personnalisée invalide" });
       }
