@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f36b21"><title>Crustella Manager</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div id="loginView" class="login-wrap">
+  <form id="loginForm" class="login-card">
+    <div class="brand-mark">C</div><p class="eyebrow">CRUSTELLA</p><h1>Manager</h1><p class="muted">Espace de gestion</p>
+    <label>Email<input id="email" type="email" required placeholder="admin@crustella.tn"></label>
+    <label>Mot de passe<input id="password" type="password" required placeholder="••••••••"></label>
+    <button class="primary" type="submit">Se connecter</button>
+    <button class="text-button" type="button" id="settingsOpen">Configurer Supabase</button>
+    <p id="loginError" class="error"></p>
+  </form>
+</div>
+<div id="appView" class="app hidden">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">C</div><div><b>CRUSTELLA</b><small>MANAGER</small></div></div>
+    <nav id="nav">
+      <button class="nav-item active" data-page="dashboard">▦ <span>Dashboard</span></button>
+      <button class="nav-item" data-page="orders">▤ <span>Commandes</span></button>
+      <button class="nav-item" data-page="employees">♙ <span>Employés</span></button>
+      <button class="nav-item" data-page="attendance">◷ <span>Présence</span></button>
+      <button class="nav-item" data-page="stock">▧ <span>Stock</span></button>
+      <button class="nav-item" data-page="sheets">▤ <span>Fiches techniques</span></button>
+      <button class="nav-item" data-page="finance">◈ <span>Caisse & dépenses</span></button>
+      <button class="nav-item" data-page="leaves">▣ <span>Congés</span></button>
+      <button class="nav-item" data-page="announcements">▱ <span>Annonces</span></button>
+    </nav>
+    <div class="side-bottom"><div id="userLabel">Connecté</div><button id="logoutBtn" class="logout">↪ Déconnexion</button></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><p class="eyebrow">CRUSTELLA / GESTION</p><h2 id="pageTitle">Dashboard</h2></div><div class="top-actions"><span class="live-dot"></span><span>Connecté</span><button id="settingsOpen2" class="icon-btn" title="Paramètres">⚙</button></div></header>
+    <section id="pageContent"></section>
+    <footer>Crustella Manager <span>•</span> Espace de gestion interne</footer>
+  </main>
+</div>
+<dialog id="settingsDialog"><form method="dialog" id="settingsForm" class="settings-card"><button class="close" value="cancel">×</button><p class="eyebrow">CONNEXION BASE DE DONNÉES</p><h2>Configuration Supabase</h2><p class="muted">Saisissez l’URL du projet et la clé anon/public. Ne jamais saisir la clé service_role.</p><label>Project URL<input id="sbUrl" type="url" placeholder="https://xxxx.supabase.co" required></label><label>Anon / Publishable key<textarea id="sbKey" rows="3" required></textarea></label><div class="actions"><button class="secondary" value="cancel">Annuler</button><button class="primary" id="saveSettings" value="default">Enregistrer</button></div><p id="settingsMessage" class="muted"></p></form></dialog>
+<div id="toast" class="toast"></div>
+<script src="app.js"></script>
+</body></html>
